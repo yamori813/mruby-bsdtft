@@ -123,16 +123,41 @@ class BsdTft
   end
     
   def cls(color)
-    window(0,0,self.width,self.hight)
-    arr = wr_dat_start
-    self.width.times {
-      arr.push(color >> 8)
-      arr.push(color & 0xff)
-    }
-    wr_dat_stop(arr)
-    (self.hight - 1).times {
-      self.transfer(arr, 0)
-    }
+    if self.model == BsdTft::S6D0151
+      window(0,0,self.width,self.hight)
+      arr = wr_dat_start
+      self.width.times {
+        arr.push(color >> 8)
+        arr.push(color & 0xff)
+      }
+      wr_dat_stop(arr)
+      (self.hight - 1).times {
+        self.transfer(arr, 0)
+      }
+    elsif self.model == BsdTft::ST7735
+      write_cmd([0x2C])
+      arr = Array.new
+      write([0x2A], [0x00, 0x02, 0x00, 0x81])
+      write([0x2B], [0x00, 0x01, 0x00, 0xA0])
+      write_cmd([0x2C])
+      for i in 1..self.hight do
+        for n in 1..self.width do
+          arr.push(color >> 8)
+          arr.push(color & 0xff)
+        end
+        if i % 2 == 0 then
+          write_data(arr);
+          arr.clear
+        end
+      end
+    end
+  end
+
+  def fill(r, g, b)
+    color = (r >> 3) << 11
+    color = color | ((g >> 2) << 5)
+    color = color | (b >> 3)
+    cls(color)
   end
   
   def lcdCopy(c)
@@ -196,26 +221,6 @@ class BsdTft
 
   def write_rgb(r, g, b)
     write_data([r & 0xF8 | g >> 5, g & 0xFC << 3 | b >> 3])
-  end
-
-  def fill(r, g, b)
-    write_cmd([0x2C])
-    arr = Array.new
-    write([0x2A], [0x00, 0x02, 0x00, 0x81])
-    write([0x2B], [0x00, 0x01, 0x00, 0xA0])
-    write_cmd([0x2C])
-    hi = r & 0xF8 | g >> 5
-    lo = g & 0xFC << 3 | b >> 3
-    for i in 1..160 do
-      for n in 1..128 do
-        arr.push(hi)
-        arr.push(lo)
-      end
-      if i % 2 == 0 then
-        write_data(arr);
-        arr.clear
-      end
-    end
   end
 
 end
