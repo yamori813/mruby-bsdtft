@@ -1,0 +1,7 @@
+name: mruby-bsdtft
+description: BsdTft class
+author: Hiroki Mori
+website: https://github.com/yamori813/mruby-bsdtft
+protocol: git
+repository: https://github.com/yamori813/mruby-bsdtft.git
+license: BSD
