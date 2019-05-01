@@ -57,7 +57,7 @@ class BsdTft
     self.transfer(arr, 0)
   end
    
-  def tft_reset
+  def init_s6d0151
 
     self.gpio_setflags(self.reset, BsdTft::OUTPUT)
     self.gpio_set(self.reset, 1)
@@ -122,6 +122,14 @@ class BsdTft
     regwr(0x0007,0x0037)
   end
     
+  def init
+    if self.model == BsdTft::S6D0151
+      init_s6d0151
+    elsif self.model == BsdTft::ST7735
+      init_st7735
+    end
+  end
+
   def cls(color)
     if self.model == BsdTft::S6D0151
       window(0,0,self.width,self.hight)
@@ -173,7 +181,7 @@ class BsdTft
 
 # for ST7735
   
-  def init_st()
+  def init_st7735
 
     self.gpio_setflags(self.reset, BsdTft::OUTPUT)	# reset
     self.gpio_setflags(self.rs, BsdTft::OUTPUT)	# self.rs

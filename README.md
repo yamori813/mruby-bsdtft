@@ -13,13 +13,26 @@ end
 ```
 ## example
 ```ruby
-p BsdTft.hi
-#=> "hi!!"
-t = BsdTft.new "hello"
-p t.hello
-#=> "hello"
-p t.bye
-#=> "hello bye"
+W = 128
+H = 160
+
+RST = 21
+
+tft = BsdTft.new(1, 0, BsdTft::S6D0151)
+
+tft.setsize(W, H)
+tft.setreset(RST)
+tft.init
+
+tft.cls(0)
+
+c = Cairo.new(W, H)
+c.set_source_rgb(1 , 0, 0)
+c.move_to(0, 0)
+c.line_to(100, 100)
+c.stroke()
+
+tft.lcdCopy(c.get_data)
 ```
 
 ## License
