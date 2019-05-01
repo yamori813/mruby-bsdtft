@@ -218,19 +218,4 @@ class BsdTft
     end
   end
 
-  def copyspi(c)
-    arr = Array.new
-    for i in 1..160 do
-      rgba = c.getpix(0, i - 1, 128)
-      for n in 1..128 do
-        arr.push(rgba[1 + (n - 1) * 4] & 0xF8 | rgba[2 + (n - 1) * 4] >> 5)
-        arr.push(rgba[2 + (n - 1) * 4] & 0xFC << 3 | rgba[3 + (n - 1) * 4] >> 3)
-      end
-      if i % 4 == 0 then
-        write_data(arr);
-        arr.clear
-      end
-    end
-  end
-
 end

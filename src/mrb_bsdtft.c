@@ -21,6 +21,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <sys/endian.h>
 
 #include <sys/spigenio.h>
 #include <fcntl.h>
@@ -221,7 +222,7 @@ static mrb_value mrb_bsdtft_transfer2(mrb_state *mrb, mrb_value self)
       ++i;
     }
     for (x = 0; x < data->width * 4; ++x) {
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if BYTE_ORDER == BIG_ENDIAN
       color = (*(framedata + 1) >> 3) << 11;
       color |= (*(framedata + 2) >> 2) << 5;
       color |= *(framedata + 3) >> 3;
