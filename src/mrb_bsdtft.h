@@ -9,6 +9,7 @@
 
 #define S6D0151	1
 #define ST7735	2
+#define ILI9341	3
 
 void mrb_mruby_bsdtft_gem_init(mrb_state *mrb);
 

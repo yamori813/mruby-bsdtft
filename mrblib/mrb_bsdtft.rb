@@ -1,5 +1,18 @@
 class BsdTft
 
+CMD_SLEEP_OUT = 0x11
+CMD_DISPLAY_ON = 0x29
+CMD_COLUMN_ADDRESS_SET = 0x2a
+CMD_PAGE_ADDRESS_SET = 0x2b
+CMD_MEMORY_WRITE = 0x2c
+CMD_MEMORY_ACCESS_CONTROL = 0x36
+CMD_COLMOD = 0x3a
+
+MAC_PORTRAIT = 0xe8
+MAC_LANDSCAPE = 0x48
+COLMOD_16BIT = 0x55
+COLMOD_18BIT = 0x66
+
 # for S6D0151
   
   def set_start_address(left, top)
@@ -125,6 +138,8 @@ class BsdTft
   def init
     if self.model == BsdTft::S6D0151
       init_s6d0151
+    elsif self.model == BsdTft::ILI9341
+      init_ili9341
     elsif self.model == BsdTft::ST7735
       init_st7735
     end
@@ -172,11 +187,61 @@ class BsdTft
     if self.model == BsdTft::S6D0151
       window(0,0,self.width,self.hight)
       self.transfer2(c)
+    elsif self.model == BsdTft::ILI9341
+      set_update_rect(0,self.width,0,self.hight)
+      self.gpio_set(self.rs, 1)
+      self.transfer2(c)
     elsif self.model == BsdTft::ST7735
       write_cmd([0x2C])
       self.gpio_set(self.rs, 1)
       self.transfer2(c)
     end
+  end
+
+# for ILI9341
+
+  def init_ili9341
+    self.gpio_setflags(self.reset, BsdTft::OUTPUT)	# reset
+    self.gpio_setflags(self.rs, BsdTft::OUTPUT)	# self.rs
+
+    self.gpio_set(self.reset, 1)
+    self.gpio_set(self.reset, 0)
+    self.gpio_set(self.reset, 1)
+
+    lwrite_command(CMD_MEMORY_ACCESS_CONTROL)
+    lwrite_data(MAC_LANDSCAPE)
+
+    lwrite_command(CMD_COLMOD)
+    lwrite_data(COLMOD_16BIT)
+
+    lwrite_command(CMD_SLEEP_OUT)
+    usleep(60*1000)
+    lwrite_command(CMD_DISPLAY_ON)
+  end
+
+  def lwrite_command(c)
+    self.gpio_set(self.rs, 0)
+    self.transfer([c], 0)
+  end
+
+  def lwrite_data(c)
+    self.gpio_set(self.rs, 1)
+    self.transfer([c], 0)
+  end
+
+  def lwrite_data16(c)
+    self.gpio_set(self.rs, 1)
+    self.transfer([c >> 8, c & 0xff], 0)
+  end
+
+  def set_update_rect(sx, ex, sy, ey)
+    lwrite_command(CMD_COLUMN_ADDRESS_SET)
+    lwrite_data16(sx)
+    lwrite_data16(ex)
+    lwrite_command(CMD_PAGE_ADDRESS_SET)
+    lwrite_data16(sy)
+    lwrite_data16(ey)
+    lwrite_command(CMD_MEMORY_WRITE)
   end
 
 # for ST7735

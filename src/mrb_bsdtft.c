@@ -285,6 +285,7 @@ void mrb_mruby_bsdtft_gem_init(mrb_state *mrb)
     mrb_define_const(mrb, bsdtft, "OUTPUT",  mrb_fixnum_value(GPIO_PIN_OUTPUT));
     mrb_define_const(mrb, bsdtft, "S6D0151",  mrb_fixnum_value(S6D0151));
     mrb_define_const(mrb, bsdtft, "ST7735",  mrb_fixnum_value(ST7735));
+    mrb_define_const(mrb, bsdtft, "ILI9341",  mrb_fixnum_value(ILI9341));
   mrb_define_method(mrb, bsdtft, "initialize", mrb_bsdtft_init, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, bsdtft, "setsize", mrb_bsdtft_setsize, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, bsdtft, "setreset", mrb_bsdtft_setreset, MRB_ARGS_REQ(1));
