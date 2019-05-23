@@ -1,17 +1,8 @@
 class BsdTft
 
-CMD_SLEEP_OUT = 0x11
-CMD_DISPLAY_ON = 0x29
 CMD_COLUMN_ADDRESS_SET = 0x2a
 CMD_PAGE_ADDRESS_SET = 0x2b
 CMD_MEMORY_WRITE = 0x2c
-CMD_MEMORY_ACCESS_CONTROL = 0x36
-CMD_COLMOD = 0x3a
-
-MAC_PORTRAIT = 0xe8
-MAC_LANDSCAPE = 0x48
-COLMOD_16BIT = 0x55
-COLMOD_18BIT = 0x66
 
 # for S6D0151
   
@@ -208,40 +199,123 @@ COLMOD_18BIT = 0x66
     self.gpio_set(self.reset, 0)
     self.gpio_set(self.reset, 1)
 
-    lwrite_command(CMD_MEMORY_ACCESS_CONTROL)
-    lwrite_data(MAC_LANDSCAPE)
+    write_cmd([0xCB])
+    write_data([0x39])
+    write_data([0x2C])
+    write_data([0x00])
+    write_data([0x34])
+    write_data([0x02])
 
-    lwrite_command(CMD_COLMOD)
-    lwrite_data(COLMOD_16BIT)
+    write_cmd([0xCF])
+    write_data([0x00])
+    write_data([0xC1])
+    write_data([0x30])
 
-    lwrite_command(CMD_SLEEP_OUT)
-    usleep(60*1000)
-    lwrite_command(CMD_DISPLAY_ON)
+    write_cmd([0xE8])
+    write_data([0x85])
+    write_data([0x00])
+    write_data([0x78])
+
+    write_cmd([0xEA])
+    write_data([0x00])
+    write_data([0x00])
+
+    write_cmd([0xED])
+    write_data([0x64])
+    write_data([0x03])
+    write_data([0x12])
+    write_data([0x81])
+
+    write_cmd([0xF7])
+    write_data([0x20])
+
+    write_cmd([0xC0])
+    write_data([0x23])
+
+    write_cmd([0xC1])
+    write_data([0x10])
+
+    write_cmd([0xC5])
+    write_data([0x3e])
+    write_data([0x28])
+
+    write_cmd([0xC7])
+    write_data([0x86])
+
+    write_cmd([0x36])
+    write_data([0x48])
+
+    write_cmd([0x3A])
+    write_data([0x55])
+
+    write_cmd([0xB1])
+    write_data([0x00])
+    write_data([0x18])
+
+    write_cmd([0xB6])
+    write_data([0x08])
+    write_data([0x82])
+    write_data([0x27])
+
+    write_cmd([0xF2])
+    write_data([0x00])
+
+    write_cmd([0x26])
+    write_data([0x01])
+
+    write_cmd([0xE0])
+    write_data([0x0F])
+    write_data([0x31])
+    write_data([0x2B])
+    write_data([0x0C])
+    write_data([0x0E])
+    write_data([0x08])
+    write_data([0x4E])
+    write_data([0xF1])
+    write_data([0x37])
+    write_data([0x07])
+    write_data([0x10])
+    write_data([0x03])
+    write_data([0x0E])
+    write_data([0x09])
+    write_data([0x00])
+
+    write_cmd([0xE1])
+    write_data([0x00])
+    write_data([0x0E])
+    write_data([0x14])
+    write_data([0x03])
+    write_data([0x11])
+    write_data([0x07])
+    write_data([0x31])
+    write_data([0xC1])
+    write_data([0x48])
+    write_data([0x08])
+    write_data([0x0F])
+    write_data([0x0C])
+    write_data([0x31])
+    write_data([0x36])
+    write_data([0x0F])
+
+    write_cmd([0x11])
+    usleep(1000*120)
+
+    write_cmd([0x29])
+    write_cmd([0x2c])
   end
 
-  def lwrite_command(c)
-    self.gpio_set(self.rs, 0)
-    self.transfer([c], 0)
-  end
-
-  def lwrite_data(c)
-    self.gpio_set(self.rs, 1)
-    self.transfer([c], 0)
-  end
-
-  def lwrite_data16(c)
-    self.gpio_set(self.rs, 1)
-    self.transfer([c >> 8, c & 0xff], 0)
+  def write_data16(c)
+    write_data([c >> 8, c & 0xff])
   end
 
   def set_update_rect(sx, ex, sy, ey)
-    lwrite_command(CMD_COLUMN_ADDRESS_SET)
-    lwrite_data16(sx)
-    lwrite_data16(ex)
-    lwrite_command(CMD_PAGE_ADDRESS_SET)
-    lwrite_data16(sy)
-    lwrite_data16(ey)
-    lwrite_command(CMD_MEMORY_WRITE)
+    write_cmd([CMD_COLUMN_ADDRESS_SET])
+    write_data16(sx)
+    write_data16(ex)
+    write_cmd([CMD_PAGE_ADDRESS_SET])
+    write_data16(sy)
+    write_data16(ey)
+    write_cmd([CMD_MEMORY_WRITE])
   end
 
 # for ST7735
