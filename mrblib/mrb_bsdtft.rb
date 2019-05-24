@@ -174,7 +174,7 @@ CMD_MEMORY_WRITE = 0x2c
     cls(color)
   end
   
-  def lcdCopy(c)
+  def lcdcopy(c)
     if self.model == BsdTft::S6D0151
       window(0,0,self.width,self.hight)
       self.transfer2(c)
