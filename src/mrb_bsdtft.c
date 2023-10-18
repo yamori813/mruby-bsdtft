@@ -223,20 +223,13 @@ static mrb_value mrb_bsdtft_transfer2(mrb_state *mrb, mrb_value self)
     }
     for (x = 0; x < data->width * 4; ++x) {
 #if BYTE_ORDER == BIG_ENDIAN
-      color = (*(framedata + 1) >> 3) << 11;
-      color |= (*(framedata + 2) >> 2) << 5;
-      color |= *(framedata + 3) >> 3;
+      txbuf[i] = *framedata++;
+      txbuf[i + 1] = *framedata++;
 #else
-      color = (*(framedata + 2) >> 3) << 11;
-      color |= (*(framedata + 1) >> 2) << 5;
-      color |= *(framedata + 0) >> 3;
+      txbuf[i + 1] = *framedata++;
+      txbuf[i] = *framedata++;
 #endif
-      framedata += 4;
-      
-      txbuf[i] = color >> 8;
-      ++i;
-      txbuf[i] = color & 0xff;
-      ++i;
+      i += 2;
     }
 
     cmd.st_command.iov_base = txbuf;
